@@ -530,11 +530,13 @@ struct ncbNativeObjectBoxing {
 			adpobj->Release();										//< コピー済みなのでadaptorは不要
 		}
 
+#if 0
 		// for reference
 		template <typename SRC>
 		inline void operator ()(VarT &dst, SRC &src, ncbTypedefs::Tag<SRC&> const &tag) const {
 			operator()<SRC&> (dst, src, tag);
 		}
+#endif
 	};
 
 	/// Unboxing
