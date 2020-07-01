@@ -1,7 +1,9 @@
 #ifndef _ncbind_hpp_
 #define _ncbind_hpp_
 
+#if 0
 #include <windows.h>
+#endif
 #include "tp_stub.h"
 #include "ncb_invoke.hpp"
 
@@ -457,7 +459,7 @@ struct ncbWideCharConvertor {
 		template <typename DST>
 		inline void operator()(DST &dst, tTJSVariant const &src) {
 			const tjs_char *str = src.GetString();
-			dst = static_cast<DST>(str ? str : L"");
+			dst = static_cast<DST>(str ? str : TJS_W(""));
 		}
 	};
 };
@@ -645,7 +647,7 @@ struct ncbPropAccessor {
 	}
 	CountT GetArrayCount() const {
 		VariantT var;
-		_obj->PropGet(0, L"count", 0, &var, _obj);
+		_obj->PropGet(0, TJS_W("count"), 0, &var, _obj);
 		return (CountT)var;
 	}
 	template <typename TargetT>
@@ -1376,7 +1378,7 @@ struct ncbNativeClassConstructor : public ncbNativeClassMethodBase {
 
 	/// constructor
 	ncbNativeClassConstructor(MethodT m) : ncbNativeClassMethodBase(nitMethod), _method(m) {
-		if (!_method && CommandT::InvokeSelect == doInvokeBase::ivsFactory)
+		if (!_method && (int)CommandT::InvokeSelect == (int)doInvokeBase::ivsFactory)
 			TVPThrowExceptionMessage(TJS_W("No factory pointer."));
 	}
 
