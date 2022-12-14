@@ -20,57 +20,8 @@ DllEntryPoint(HINSTANCE /*hinst*/, unsigned long /*reason*/, void* /*lpReserved*
 {
 	return 1;
 }
-#endif
 
 //---------------------------------------------------------------------------
-// tTJSNC_KirikiriSDL2Internal : Kirikiri SDL2 internal class
-//---------------------------------------------------------------------------
-class tTJSNC_KirikiriSDL2Internal : public tTJSNativeClass
-{
-public:
-	tTJSNC_KirikiriSDL2Internal();
-
-	static tjs_uint32 ClassID;
-
-protected:
-	tTJSNativeInstance * CreateNativeInstance();
-};
-
-//---------------------------------------------------------------------------
-// tTJSNC_KirikiriSDL2Internal
-//---------------------------------------------------------------------------
-tjs_uint32 tTJSNC_KirikiriSDL2Internal::ClassID = -1;
-tTJSNC_KirikiriSDL2Internal::tTJSNC_KirikiriSDL2Internal() : tTJSNativeClass(TJS_W("KirikiriSDL2Internal"))
-{
-	TJS_BEGIN_NATIVE_MEMBERS(KirikiriSDL2Internal)
-	TJS_DECL_EMPTY_FINALIZE_METHOD
-//----------------------------------------------------------------------
-TJS_BEGIN_NATIVE_CONSTRUCTOR_DECL_NO_INSTANCE(/*TJS class name*/KirikiriSDL2Internal)
-{
-	return TJS_S_OK;
-}
-TJS_END_NATIVE_CONSTRUCTOR_DECL(/*TJS class name*/KirikiriSDL2Internal)
-//----------------------------------------------------------------------
-
-//----------------------------------------------------------------------
-	TJS_END_NATIVE_MEMBERS
-
-} // end of tTJSNC_Debug::tTJSNC_Debug
-//---------------------------------------------------------------------------
-tTJSNativeInstance *tTJSNC_KirikiriSDL2Internal::CreateNativeInstance()
-{
-	return NULL;
-}
-static iTJSDispatch2 * TVPCreateNativeClass_KirikiriSDL2Internal(iTJSDispatch2* global)
-{
-	ncbAutoRegister::AllRegist();
-	iTJSDispatch2 *cls = new tTJSNC_KirikiriSDL2Internal();
-	return cls;
-}
-
-static tTVPAtInstallClass TVPInstallClassKirikiriSDL2Internal(TJS_W("KirikiriSDL2Internal"), TVPCreateNativeClass_KirikiriSDL2Internal, TJS_W(""));
-
-#if 0
 static tjs_int GlobalRefCountAtInit = 0;
 
 EXPORT(HRESULT) V2Link(iTVPFunctionExporter *exporter)
@@ -125,6 +76,54 @@ EXPORT(HRESULT) V2Unlink()
 	return S_OK;
 }
 #endif
+
+//---------------------------------------------------------------------------
+// tTJSNC_KirikiriSDL2Internal : Kirikiri SDL2 internal class
+//---------------------------------------------------------------------------
+class tTJSNC_KirikiriSDL2Internal : public tTJSNativeClass
+{
+public:
+	tTJSNC_KirikiriSDL2Internal();
+
+	static tjs_uint32 ClassID;
+
+protected:
+	tTJSNativeInstance * CreateNativeInstance();
+};
+
+//---------------------------------------------------------------------------
+// tTJSNC_KirikiriSDL2Internal
+//---------------------------------------------------------------------------
+tjs_uint32 tTJSNC_KirikiriSDL2Internal::ClassID = -1;
+tTJSNC_KirikiriSDL2Internal::tTJSNC_KirikiriSDL2Internal() : tTJSNativeClass(TJS_W("KirikiriSDL2Internal"))
+{
+	TJS_BEGIN_NATIVE_MEMBERS(KirikiriSDL2Internal)
+	TJS_DECL_EMPTY_FINALIZE_METHOD
+//----------------------------------------------------------------------
+TJS_BEGIN_NATIVE_CONSTRUCTOR_DECL_NO_INSTANCE(/*TJS class name*/KirikiriSDL2Internal)
+{
+	return TJS_S_OK;
+}
+TJS_END_NATIVE_CONSTRUCTOR_DECL(/*TJS class name*/KirikiriSDL2Internal)
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+	TJS_END_NATIVE_MEMBERS
+
+} // end of tTJSNC_Debug::tTJSNC_Debug
+//---------------------------------------------------------------------------
+tTJSNativeInstance *tTJSNC_KirikiriSDL2Internal::CreateNativeInstance()
+{
+	return NULL;
+}
+static iTJSDispatch2 * TVPCreateNativeClass_KirikiriSDL2Internal(iTJSDispatch2* global)
+{
+	ncbAutoRegister::AllRegist();
+	iTJSDispatch2 *cls = new tTJSNC_KirikiriSDL2Internal();
+	return cls;
+}
+
+static tTVPAtInstallClass TVPInstallClassKirikiriSDL2Internal(TJS_W("KirikiriSDL2Internal"), TVPCreateNativeClass_KirikiriSDL2Internal, TJS_W(""));
 
 
 //---------------------------------------------------------------------------
