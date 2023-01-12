@@ -2413,5 +2413,11 @@ private:
 #define NCB_PRE_UNREGIST_CALLBACK(cb)  NCB_REGISTER_CALLBACK(PreRegist,  0, &cb, 0_ ## cb)
 #define NCB_POST_UNREGIST_CALLBACK(cb) NCB_REGISTER_CALLBACK(PostRegist, 0, &cb, 0_ ## cb)
 
+#if 0
+////////////////////////////////////////
+/// レジスト前後のコールバック登録
+#define NCB_DLL_HINSTANCE gDllInstance
+extern HINSTANCE gDllInstance;
+#endif
 
 #endif
