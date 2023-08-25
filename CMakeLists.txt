@@ -1,3 +1,30 @@
+
+cmake_minimum_required(VERSION 3.12)
+project(ncbind_krkrsdl2)
+
+include(FetchContent)
+
+FetchContent_Declare(
+	krkrsdl2-tp_stub
+	URL https://github.com/krkrsdl2/krkrsdl2/releases/download/latest/krkrsdl2-tp_stub.tar.gz
+)
+
+FetchContent_MakeAvailable(krkrsdl2-tp_stub)
+
+add_library(ncbind STATIC)
+set_target_properties(ncbind PROPERTIES CXX_STANDARD 11)
+set_target_properties(ncbind PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+target_sources(ncbind PRIVATE ncbind.cpp)
+target_link_libraries(ncbind tp_stub)
+target_include_directories(ncbind PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_library(testbind MODULE)
+set_target_properties(testbind PROPERTIES CXX_STANDARD 11)
+set_target_properties(testbind PROPERTIES PREFIX "")
+target_sources(testbind PRIVATE testbind.cpp)
+target_link_libraries(testbind ncbind)
+
+if(FALSE)
 cmake_minimum_required(VERSION 3.16)
 
 # UTF-8 source
@@ -26,4 +53,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_link_libraries(${PROJECT_NAME} PUBLIC
     tp_stub
 )
+endif()
 
