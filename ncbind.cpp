@@ -1,20 +1,34 @@
 #if 0
 #include <windows.h>
 #endif
+#ifdef TVP_COMPILING_KRKRSDL2
 #include "tjsCommHead.h"
 #include "Extension.h"
+#endif
+#ifndef TVP_COMPILING_KRKRSDL2
+#include "tp_stub.h"
+#endif
 #include "ncbind.hpp"
 
 
-#if 0
+#ifndef TVP_COMPILING_KRKRSDL2
+#ifdef _WIN32
 #define EXPORT(hr) extern "C" __declspec(dllexport) hr __stdcall
+#else
+#define EXPORT(hr) extern "C" __attribute__((visibility ("default"))) hr
+#endif
+#endif
 
+#ifndef TVP_COMPILING_KRKRSDL2
+#ifdef _WIN32
 #ifdef _MSC_VER
 #pragma comment(linker, "/EXPORT:V2Link=_V2Link@4")
 #pragma comment(linker, "/EXPORT:V2Unlink=_V2Unlink@0")
 #endif
+#endif
 
 //--------------------------------------
+#ifdef _WIN32
 HINSTANCE gDllInstance = NULL;
 
 //--------------------------------------
@@ -27,6 +41,7 @@ DllMain(HINSTANCE hinst, DWORD reason, LPVOID /*lpReserved*/)
 
   return 1;
 }
+#endif
 
 //---------------------------------------------------------------------------
 static tjs_int GlobalRefCountAtInit = 0;
@@ -84,6 +99,7 @@ EXPORT(HRESULT) V2Unlink()
 }
 #endif
 
+#ifdef TVP_COMPILING_KRKRSDL2
 //---------------------------------------------------------------------------
 // tTJSNC_KirikiriSDL2Internal : Kirikiri SDL2 internal class
 //---------------------------------------------------------------------------
@@ -131,6 +147,7 @@ static iTJSDispatch2 * TVPCreateNativeClass_KirikiriSDL2Internal(iTJSDispatch2* 
 }
 
 static tTVPAtInstallClass TVPInstallClassKirikiriSDL2Internal(TJS_W("KirikiriSDL2Internal"), TVPCreateNativeClass_KirikiriSDL2Internal, TJS_W(""));
+#endif
 
 
 //---------------------------------------------------------------------------
