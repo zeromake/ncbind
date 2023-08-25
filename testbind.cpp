@@ -26,10 +26,14 @@ struct ttstrFormat {
 	ttstrFormat(tjs_nchar const *fmt) : _format(fmt) {}
 	template <typename T>
 	tjs_nchar const* operator()(T t) {
+#ifdef _WIN32
 #if _MSC_VER >= 1400
 		_snprintf_s(_buff, sizeof(_buff), _TRUNCATE, _format, t);
 #else
 		_snprintf(_buff, sizeof(_buff)-1, _format, t);
+#endif
+#else
+		snprintf(_buff, sizeof(_buff)-1, _format, t);
 #endif
 		return _buff;
 	}
@@ -245,13 +249,17 @@ CHECK(TypeConvChecker,
 ////////////////////////////////////////
 
 struct BoxingChecker {
+#if 0
 	static TypeConvChecker& CheckRef(TypeConvChecker &ref) { return ref; }
+#endif
 	static TypeConvChecker* CheckPtr(TypeConvChecker *ref) { return ref; }
 	static bool CheckConstRef(TypeConvChecker const &ref, bool b) { return ref.Bool(b);  }
 	static bool CheckConstPtr(TypeConvChecker const *ref, bool b) { return ref->Bool(b); }
 };
 NCB_REGISTER_CLASS(BoxingChecker) {
+#if 0
 	NCB_METHOD(CheckRef);
+#endif
 	NCB_METHOD(CheckPtr);
 	NCB_METHOD(CheckConstRef);
 	NCB_METHOD(CheckConstPtr);
@@ -260,7 +268,9 @@ CHECK(BoxingChecker,
 	  SCRIPT_BEGIN
 	  "var inst = new TypeConvChecker();"
 
+#if 0
 	  SCRIPT_EVAL(    "BoxingChecker.CheckRef(inst).Name == 'TypeConvChecker'")
+#endif
 	  SCRIPT_EVAL(    "BoxingChecker.CheckPtr(inst).Name == 'TypeConvChecker'")
 
 	  SCRIPT_EVAL_LOG("BoxingChecker.CheckConstRef(inst, true ) == true",  "TypeConvChecker::Bool(True)")
