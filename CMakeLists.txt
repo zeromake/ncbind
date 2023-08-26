@@ -16,7 +16,7 @@ set_target_properties(ncbind PROPERTIES CXX_STANDARD 11)
 set_target_properties(ncbind PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 target_sources(ncbind PRIVATE ncbind.cpp)
 target_link_libraries(ncbind tp_stub)
-target_include_directories(ncbind PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(ncbind PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} include)
 
 add_library(testbind MODULE)
 set_target_properties(testbind PROPERTIES CXX_STANDARD 11)
