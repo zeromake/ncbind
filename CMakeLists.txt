@@ -2,6 +2,20 @@
 cmake_minimum_required(VERSION 3.12)
 project(ncbind_krkrsdl2)
 
+set(PLUGIN_NAME testbind)
+set(PLUGIN_DEPS ncbind)
+
+if((NOT DEFINED CMAKE_BUILD_TYPE) OR (NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL ""))
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+set(CMAKE_BUILD_TYPE MinSizeRel)
+else()
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
+endif()
+
+set(PLUGIN_SRC testbind.cpp)
+set(PLUGIN_INCLUDES include)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -25,37 +39,38 @@ target_compile_options(ncbind PRIVATE
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
-add_executable(testbind)
-set_target_properties(testbind PROPERTIES SUFFIX ".so")
+add_executable(${PLUGIN_NAME})
+set_target_properties(${PLUGIN_NAME} PROPERTIES SUFFIX ".so")
 else()
-add_library(testbind MODULE)
+add_library(${PLUGIN_NAME} MODULE)
 endif()
-set_target_properties(testbind PROPERTIES CXX_STANDARD 11)
-set_target_properties(testbind PROPERTIES PREFIX "")
-target_sources(testbind PRIVATE testbind.cpp)
-target_link_libraries(testbind ncbind)
+set_target_properties(${PLUGIN_NAME} PROPERTIES CXX_STANDARD 11)
+set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+target_sources(${PLUGIN_NAME} PRIVATE ${PLUGIN_SRC})
+target_include_directories(${PLUGIN_NAME} PRIVATE ${PLUGIN_INCLUDES})
+target_link_libraries(${PLUGIN_NAME} ${PLUGIN_DEPS})
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
-target_link_options(testbind PRIVATE
+target_link_options(${PLUGIN_NAME} PRIVATE
 	-sDISABLE_EXCEPTION_CATCHING=0
 	-fPIC
 	-sSIDE_MODULE=1
 )
-target_compile_options(testbind PRIVATE
+target_compile_options(${PLUGIN_NAME} PRIVATE
 	-sDISABLE_EXCEPTION_CATCHING=0
 	-fPIC
 )
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-target_link_options(testbind PRIVATE
+target_link_options(${PLUGIN_NAME} PRIVATE
 	-O3
 )
 endif()
 if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-target_link_options(testbind PRIVATE
+target_link_options(${PLUGIN_NAME} PRIVATE
 	-O2
 )
 endif()
 if(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-target_link_options(testbind PRIVATE
+target_link_options(${PLUGIN_NAME} PRIVATE
 	-Os
 )
 endif()
