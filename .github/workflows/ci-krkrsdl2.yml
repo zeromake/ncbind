@@ -193,7 +193,7 @@
       ],
       "runs-on" : "ubuntu-20.04",
       "timeout-minutes" : 20,
-      "if" : "github.ref == 'refs/heads/main'",
+      "if" : "github.ref == 'refs/heads/krkrsdl2'",
       "steps" : [
         {
           "name" : "Download all artifacts",
@@ -205,12 +205,12 @@
         },
         {
           "name" : "Create prerelease",
-          "if" : "github.ref == 'refs/heads/main'",
+          "if" : "github.ref == 'refs/heads/krkrsdl2'",
           "uses" : "marvinpinto/action-automatic-releases@latest",
           "with" : {
             "repo_token" : "${{ secrets.GITHUB_TOKEN }}",
             "prerelease" : "true",
-            "automatic_release_tag" : "latest",
+            "automatic_release_tag" : "latest_krkrsdl2",
             "title" : "Latest development builds",
             "files" : "*.zip"
           }
