@@ -14,3 +14,4 @@
 *.o
 *.7z
 build
+build-*/
