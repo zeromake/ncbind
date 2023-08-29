@@ -17,12 +17,49 @@ set_target_properties(ncbind PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 target_sources(ncbind PRIVATE ncbind.cpp)
 target_link_libraries(ncbind tp_stub)
 target_include_directories(ncbind PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} include)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+target_compile_options(ncbind PRIVATE
+	-sDISABLE_EXCEPTION_CATCHING=0
+	-fPIC
+)
+endif()
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+add_executable(testbind)
+set_target_properties(testbind PROPERTIES SUFFIX ".so")
+else()
 add_library(testbind MODULE)
+endif()
 set_target_properties(testbind PROPERTIES CXX_STANDARD 11)
 set_target_properties(testbind PROPERTIES PREFIX "")
 target_sources(testbind PRIVATE testbind.cpp)
 target_link_libraries(testbind ncbind)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
+target_link_options(testbind PRIVATE
+	-sDISABLE_EXCEPTION_CATCHING=0
+	-fPIC
+	-sSIDE_MODULE=1
+)
+target_compile_options(testbind PRIVATE
+	-sDISABLE_EXCEPTION_CATCHING=0
+	-fPIC
+)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+target_link_options(testbind PRIVATE
+	-O3
+)
+endif()
+if(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+target_link_options(testbind PRIVATE
+	-O2
+)
+endif()
+if(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+target_link_options(testbind PRIVATE
+	-Os
+)
+endif()
+endif()
 
 if(FALSE)
 cmake_minimum_required(VERSION 3.16)
