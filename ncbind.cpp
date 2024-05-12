@@ -9,6 +9,8 @@
 #include "tp_stub.h"
 #endif
 #include "ncbind.hpp"
+#include <set>
+#include <map>
 
 
 #ifndef TVP_COMPILING_KRKRSDL2
@@ -48,51 +50,51 @@ static tjs_int GlobalRefCountAtInit = 0;
 
 EXPORT(HRESULT) V2Link(iTVPFunctionExporter *exporter)
 {
-	// ƒXƒ^ƒu‚Ì‰Šú‰»(•K‚¸‹Lq‚·‚é)
+	// ã‚¹ã‚¿ãƒ–ã®åˆæœŸåŒ–(å¿…ãšè¨˜è¿°ã™ã‚‹)
 	TVPInitImportStub(exporter);
 
 	NCB_LOG_W("V2Link");
 
-	// AutoRegister‚Å“o˜^‚³‚ê‚½ƒNƒ‰ƒX“™‚ğ“o˜^‚·‚é
+	// AutoRegisterã§ç™»éŒ²ã•ã‚ŒãŸã‚¯ãƒ©ã‚¹ç­‰ã‚’ç™»éŒ²ã™ã‚‹
 	ncbAutoRegister::AllRegist();
 
-	// ‚±‚Ì“_‚Å‚Ì TVPPluginGlobalRefCount ‚Ì’l‚ğ
+	// ã“ã®æ™‚ç‚¹ã§ã® TVPPluginGlobalRefCount ã®å€¤ã‚’
 	GlobalRefCountAtInit = TVPPluginGlobalRefCount;
-	// ‚Æ‚µ‚ÄT‚¦‚Ä‚¨‚­BTVPPluginGlobalRefCount ‚Í‚±‚Ìƒvƒ‰ƒOƒCƒ““à‚Å
-	// ŠÇ—‚³‚ê‚Ä‚¢‚é tTJSDispatch ”h¶ƒIƒuƒWƒFƒNƒg‚ÌQÆƒJƒEƒ“ƒ^‚Ì‘Œv‚ÅA
-	// ‰ğ•ú‚É‚Í‚±‚ê‚Æ“¯‚¶‚©A‚±‚ê‚æ‚è‚à­‚È‚­‚È‚Á‚Ä‚È‚¢‚Æ‚È‚ç‚È‚¢B
-	// ‚»‚¤‚È‚Á‚Ä‚È‚¯‚ê‚ÎA‚Ç‚±‚©•Ê‚Ì‚Æ‚±‚ë‚ÅŠÖ”‚È‚Ç‚ªQÆ‚³‚ê‚Ä‚¢‚ÄA
-	// ƒvƒ‰ƒOƒCƒ“‚Í‰ğ•ú‚Å‚«‚È‚¢‚ÆŒ¾‚¤‚±‚Æ‚É‚È‚éB
+	// ã¨ã—ã¦æ§ãˆã¦ãŠãã€‚TVPPluginGlobalRefCount ã¯ã“ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³å†…ã§
+	// ç®¡ç†ã•ã‚Œã¦ã„ã‚‹ tTJSDispatch æ´¾ç”Ÿã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å‚ç…§ã‚«ã‚¦ãƒ³ã‚¿ã®ç·è¨ˆã§ã€
+	// è§£æ”¾æ™‚ã«ã¯ã“ã‚Œã¨åŒã˜ã‹ã€ã“ã‚Œã‚ˆã‚Šã‚‚å°‘ãªããªã£ã¦ãªã„ã¨ãªã‚‰ãªã„ã€‚
+	// ãã†ãªã£ã¦ãªã‘ã‚Œã°ã€ã©ã“ã‹åˆ¥ã®ã¨ã“ã‚ã§é–¢æ•°ãªã©ãŒå‚ç…§ã•ã‚Œã¦ã„ã¦ã€
+	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã¯è§£æ”¾ã§ããªã„ã¨è¨€ã†ã“ã¨ã«ãªã‚‹ã€‚
 
 	return S_OK;
 }
 //---------------------------------------------------------------------------
 EXPORT(HRESULT) V2Unlink()
 {
-	// ‹g—¢‹g—¢‘¤‚©‚çAƒvƒ‰ƒOƒCƒ“‚ğ‰ğ•ú‚µ‚æ‚¤‚Æ‚·‚é‚Æ‚«‚ÉŒÄ‚Î‚ê‚éŠÖ”
+	// å‰é‡Œå‰é‡Œå´ã‹ã‚‰ã€ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è§£æ”¾ã—ã‚ˆã†ã¨ã™ã‚‹ã¨ãã«å‘¼ã°ã‚Œã‚‹é–¢æ•°
 
-	// ‚à‚µ‰½‚ç‚©‚ÌğŒ‚Åƒvƒ‰ƒOƒCƒ“‚ğ‰ğ•ú‚Å‚«‚È‚¢ê‡‚Í
-	// ‚±‚Ì“_‚Å E_FAIL ‚ğ•Ô‚·‚æ‚¤‚É‚·‚éB
-	// ‚±‚±‚Å‚ÍATVPPluginGlobalRefCount ‚ª GlobalRefCountAtInit ‚æ‚è‚à
-	// ‘å‚«‚­‚È‚Á‚Ä‚¢‚ê‚Î¸”s‚Æ‚¢‚¤‚±‚Æ‚É‚·‚éB
+	// ã‚‚ã—ä½•ã‚‰ã‹ã®æ¡ä»¶ã§ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è§£æ”¾ã§ããªã„å ´åˆã¯
+	// ã“ã®æ™‚ç‚¹ã§ E_FAIL ã‚’è¿”ã™ã‚ˆã†ã«ã™ã‚‹ã€‚
+	// ã“ã“ã§ã¯ã€TVPPluginGlobalRefCount ãŒ GlobalRefCountAtInit ã‚ˆã‚Šã‚‚
+	// å¤§ãããªã£ã¦ã„ã‚Œã°å¤±æ•—ã¨ã„ã†ã“ã¨ã«ã™ã‚‹ã€‚
 	if (TVPPluginGlobalRefCount > GlobalRefCountAtInit) {
 		NCB_LOG_W("V2Unlink ...failed");
 		return E_FAIL;
-		// E_FAIL ‚ª‹A‚é‚ÆAPlugins.unlink ƒƒ\ƒbƒh‚Í‹U‚ğ•Ô‚·
+		// E_FAIL ãŒå¸°ã‚‹ã¨ã€Plugins.unlink ãƒ¡ã‚½ãƒƒãƒ‰ã¯å½ã‚’è¿”ã™
 	} else {
 		NCB_LOG_W("V2Unlink");
 	}
 	/*
-		‚½‚¾‚µAƒNƒ‰ƒX‚Ìê‡AŒµ–§‚ÉuƒIƒuƒWƒFƒNƒg‚ªg—p’†‚Å‚ ‚év‚Æ‚¢‚¤‚±‚Æ‚ğ
-		’m‚é‚·‚×‚ª‚ ‚è‚Ü‚¹‚ñBŠî–{“I‚É‚ÍAPlugins.unlink ‚É‚æ‚éƒvƒ‰ƒOƒCƒ“‚Ì‰ğ•ú‚Í
-		ŠëŒ¯‚Å‚ ‚é‚Æl‚¦‚Ä‚­‚¾‚³‚¢ (‚¢‚Á‚½‚ñ Plugins.link ‚ÅƒŠƒ“ƒN‚µ‚½‚çAÅŒã‚Ü
-		‚Åƒvƒ‰ƒOƒCƒ“‚ğ‰ğ•ú‚¹‚¸AƒvƒƒOƒ‰ƒ€I—¹‚Æ“¯‚É©“®“I‚É‰ğ•ú‚³‚¹‚é‚Ì‚ª‹g)B
+		ãŸã ã—ã€ã‚¯ãƒ©ã‚¹ã®å ´åˆã€å³å¯†ã«ã€Œã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒä½¿ç”¨ä¸­ã§ã‚ã‚‹ã€ã¨ã„ã†ã“ã¨ã‚’
+		çŸ¥ã‚‹ã™ã¹ãŒã‚ã‚Šã¾ã›ã‚“ã€‚åŸºæœ¬çš„ã«ã¯ã€Plugins.unlink ã«ã‚ˆã‚‹ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è§£æ”¾ã¯
+		å±é™ºã§ã‚ã‚‹ã¨è€ƒãˆã¦ãã ã•ã„ (ã„ã£ãŸã‚“ Plugins.link ã§ãƒªãƒ³ã‚¯ã—ãŸã‚‰ã€æœ€å¾Œã¾
+		ã§ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è§£æ”¾ã›ãšã€ãƒ—ãƒ­ã‚°ãƒ©ãƒ çµ‚äº†ã¨åŒæ™‚ã«è‡ªå‹•çš„ã«è§£æ”¾ã•ã›ã‚‹ã®ãŒå‰)ã€‚
 	*/
 
-	// AutoRegister‚Å“o˜^‚³‚ê‚½ƒNƒ‰ƒX“™‚ğíœ‚·‚é
+	// AutoRegisterã§ç™»éŒ²ã•ã‚ŒãŸã‚¯ãƒ©ã‚¹ç­‰ã‚’å‰Šé™¤ã™ã‚‹
 	ncbAutoRegister::AllUnregist();
 
-	// ƒXƒ^ƒu‚Ìg—pI—¹(•K‚¸‹Lq‚·‚é)
+	// ã‚¹ã‚¿ãƒ–ã®ä½¿ç”¨çµ‚äº†(å¿…ãšè¨˜è¿°ã™ã‚‹)
 	TVPUninitImportStub();
 
 	return S_OK;
@@ -151,9 +153,31 @@ static tTVPAtInstallClass TVPInstallClassKirikiriSDL2Internal(TJS_W("KirikiriSDL
 
 
 //---------------------------------------------------------------------------
-// static•Ï”‚ÌÀ‘Ì
+// staticå¤‰æ•°ã®å®Ÿä½“
 
-// auto register æ“ªƒ|ƒCƒ“ƒ^
+// auto register å…ˆé ­ãƒã‚¤ãƒ³ã‚¿
 ncbAutoRegister::ThisClassT const*
 ncbAutoRegister::_top[ncbAutoRegister::LINE_COUNT] = NCB_INNER_AUTOREGISTER_LINES_INSTANCE;
 
+
+std::set<ttstr> TVPRegisteredPlugins;
+std::map<ttstr, ncbAutoRegister::INTERNAL_PLUGIN_LISTS > ncbAutoRegister::_internal_plugins;
+
+bool ncbAutoRegister::LoadModule(const ttstr &_name)
+{
+	ttstr name = _name.AsLowerCase();
+	if (TVPRegisteredPlugins.find(name) != TVPRegisteredPlugins.end())
+		return false;
+	auto it = _internal_plugins.find(name);
+	if (it != _internal_plugins.end()) {
+		for (int line = 0; line < ncbAutoRegister::LINE_COUNT; ++line) {
+			const std::list<ncbAutoRegister const*> &plugin_list = it->second.lists[line];
+			for (auto i = plugin_list.begin(); i != plugin_list.end(); ++i) {
+				(*i)->Regist();
+			}
+		}
+		TVPRegisteredPlugins.insert(name);
+		return true;
+	}
+	return false;
+}

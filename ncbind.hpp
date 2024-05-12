@@ -1,6 +1,8 @@
 #ifndef _ncbind_hpp_
 #define _ncbind_hpp_
 
+#include <list>
+#include <map>
 #if 0
 #include <windows.h>
 #endif
@@ -2157,14 +2159,32 @@ struct ncbAutoRegister {
 		PostRegist,
 		LINE_COUNT };
 #define NCB_INNER_AUTOREGISTER_LINES_INSTANCE { 0, 0, 0 }
+	NameT modulename;
+	ncbAutoRegister(LineT line) : _next(_top[line]), modulename(NULL) { _top[line] = this; }
+	ncbAutoRegister(NameT name, LineT line) : _next(_top[line]), modulename(name) { _top[line] = this; }
+	static void AllInternalRegist(LineT line) {
+		NCB_LOG_2(TJS_W("AllInternalRegist:"), line);
+		for (ThisClassT const* p = _top[line]; p; p = p->_next) {
+			if (p->modulename == NULL) {
+				continue;
+			}
+			ttstr name = p->modulename;
+			name.ToLowerCase();
+			_internal_plugins[name].lists[line].push_back(p);
+		}
+	}
 
-	ncbAutoRegister(LineT line) : _next(_top[line]) { _top[line] = this; }
+	static void AllInternalRegist() {
+		for (int line = 0; line < LINE_COUNT; line++)
+			AllInternalRegist(static_cast<LineT>(line));
+	}
 
 	static void AllRegist(  LineT line) { NCB_LOG_2(TJS_W("AllRegist:"),   line); for (ThisClassT const* p = _top[line]; p; p = p->_next) p->Regist();   }
 	static void AllUnregist(LineT line) { NCB_LOG_2(TJS_W("AllUnregist:"), line); for (ThisClassT const* p = _top[line]; p; p = p->_next) p->Unregist(); }
 
 	static void AllRegist()   { for (int line = 0; line < LINE_COUNT; line++) AllRegist(  static_cast<LineT>(line)); }
 	static void AllUnregist() { for (int line = 0; line < LINE_COUNT; line++) AllUnregist(static_cast<LineT>(line)); }
+	static bool LoadModule(const ttstr &_name);
 protected:
 	virtual void Regist()   const = 0;
 	virtual void Unregist() const = 0;
@@ -2172,6 +2192,12 @@ private:
 	ncbAutoRegister();
 	/****/ ThisClassT const* _next;
 	static ThisClassT const* _top[LINE_COUNT];
+
+	struct INTERNAL_PLUGIN_LISTS {
+        std::list<ThisClassT const*> lists[LINE_COUNT];
+    };
+
+	static std::map<ttstr, INTERNAL_PLUGIN_LISTS > _internal_plugins;
 };
 
 ////////////////////////////////////////
@@ -2400,6 +2426,9 @@ struct ncbCallbackAutoRegister : public ncbAutoRegister {
 
 	ncbCallbackAutoRegister(LineT line, CallbackT init, CallbackT term)
 		: ncbAutoRegister(line), _init(init), _term(term) {}
+
+	ncbCallbackAutoRegister(NameT name, LineT line, CallbackT init, CallbackT term)
+		: ncbAutoRegister(name, line), _init(init), _term(term) {}
 protected:
 	void Regist()   const { if (_init) _init(); }
 	void Unregist() const { if (_term) _term(); }
@@ -2413,6 +2442,11 @@ private:
 #define NCB_PRE_UNREGIST_CALLBACK(cb)  NCB_REGISTER_CALLBACK(PreRegist,  0, &cb, 0_ ## cb)
 #define NCB_POST_UNREGIST_CALLBACK(cb) NCB_REGISTER_CALLBACK(PostRegist, 0, &cb, 0_ ## cb)
 
+#define NCB_INTERNAL_REGISTER_CALLBACK(name, pos, init, term, tag) static ncbCallbackAutoRegister ncbCallbackAutoRegister_ ## pos ## _ ## tag (name, ncbAutoRegister::pos, init, term)
+#define NCB_INTERNAL_PRE_REGIST_CALLBACK(name, cb)    NCB_INTERNAL_REGISTER_CALLBACK(name, PreRegist,  &cb, 0, cb ## _0)
+#define NCB_INTERNAL_POST_REGIST_CALLBACK(name, cb)   NCB_INTERNAL_REGISTER_CALLBACK(name, PostRegist, &cb, 0, cb ## _0)
+#define NCB_INTERNAL_PRE_UNREGIST_CALLBACK(name, cb)  NCB_INTERNAL_REGISTER_CALLBACK(name, PreRegist,  0, &cb, 0_ ## cb)
+#define NCB_INTERNAL_POST_UNREGIST_CALLBACK(name, cb) NCB_INTERNAL_REGISTER_CALLBACK(name, PostRegist, 0, &cb, 0_ ## cb)
 #if 0
 ////////////////////////////////////////
 /// レジスト前後のコールバック登録
